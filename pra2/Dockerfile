@@ -1,21 +1,16 @@
-FROM python:3.6-alpine
+FROM python:3.12-slim
 
-ENV FLASK_APP flasky.py
-ENV FLASK_CONFIG production
+ENV FLASK_APP hello.py
 
-RUN adduser -D flasky
-USER flasky
+# install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-WORKDIR /home/flasky
+COPY . /pra2
 
-COPY requirements requirements
-RUN python -m venv venv
-RUN venv/bin/pip install -r requirements/docker.txt
-
-COPY app app
-COPY migrations migrations
-COPY flasky.py config.py boot.sh ./
+WORKDIR /pra2
 
 # run-time configuration
-EXPOSE 5000
-ENTRYPOINT ["./boot.sh"]
+EXPOSE 5001
+
+CMD ["flask", "run", "--host", "0.0.0.0", "--port", "5001"]
